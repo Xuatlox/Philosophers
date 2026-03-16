@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 13:44:31 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/12 18:12:41 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/16 16:36:52 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <sys/time.h>
 
 typedef struct s_philo
 {
@@ -28,6 +29,8 @@ typedef struct s_philo
 	int				die_time;
 	int				eat_time;
 	int				sleep_time;
+	int				turns;
+	size_t		init;
 } t_philo;
 
 typedef struct	s_prog
@@ -38,7 +41,8 @@ typedef struct	s_prog
 	int				sleep_time;
 	int				turns;
 	int				death_end;
-	pthread_mutex_t	**forks;
+	size_t			initial_time;
+	pthread_mutex_t	*forks;
 	t_philo			*philos;
 } t_prog;
 

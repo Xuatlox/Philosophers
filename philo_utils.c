@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 18:10:03 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/12 18:29:46 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/16 15:55:10 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ void	philo_init(t_prog *prog)
 		prog->philos[i].sleep_time = prog->sleep_time;
 		prog->philos[i].dead = &prog->death_end;
 		prog->philos[i].id = i + 1;
+		prog->philos[i].init = prog->initial_time;
+		prog->philos[i].turns = prog->turns;
 		++i;
 	}
 }
