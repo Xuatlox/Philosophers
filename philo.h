@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 13:44:31 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/16 16:36:52 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/18 17:53:49 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,17 @@ typedef struct s_philo
 	pthread_mutex_t	*r_fork;
 	int				id;
 	int				*dead;
-	int				die_time;
 	int				eat_time;
 	int				sleep_time;
-	int				turns;
-	size_t		init;
+	int				meals;
+	size_t			last_meal;
+	size_t			init;
 } t_philo;
 
 typedef struct	s_prog
 {
 	int				nb_philo;
-	int				die_time;
+	size_t			die_time;
 	int				eat_time;
 	int				sleep_time;
 	int				turns;
@@ -50,5 +50,7 @@ int		ft_atoi(const char *nptr);
 size_t	ft_strlen(const char *s);
 void	*ft_calloc(size_t nmemb, size_t size);
 void	philo_init(t_prog *prog);
+void	*monitor_routine(void *param);
+size_t	get_msec(size_t initial_time);
 
 #endif
