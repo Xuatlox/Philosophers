@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 13:44:31 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/18 17:53:49 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/23 15:02:25 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,6 @@ void	*ft_calloc(size_t nmemb, size_t size);
 void	philo_init(t_prog *prog);
 void	*monitor_routine(void *param);
 size_t	get_msec(size_t initial_time);
+void	display_info(char *info, t_philo *philo);
 
 #endif

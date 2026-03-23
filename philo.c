@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 13:44:16 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/18 16:34:56 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/23 17:33:07 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,28 +38,29 @@ static void error(const char *message, t_prog *prog)
 
 void	*philo_routine(void *param)
 {
-	t_philo	philo;
-	size_t	time;
+	t_philo	*philo;
 
-	philo = *(t_philo *)param;
-	while (*philo.dead == 0)
+	philo = (t_philo *)param;
+	while (!*philo->dead)
 	{
-		pthread_mutex_lock(philo.l_fork);
-		time = get_msec(philo.init);
-		printf("%ld %d has taken a fork\n", time, philo.id);
-		pthread_mutex_lock(philo.r_fork);
-		time = get_msec(philo.init);
-		printf("%ld %d is eating\n", time, philo.id);
-		usleep(philo.eat_time);
-		++philo.meals;
-		philo.last_meal = get_msec(philo.init);
-		pthread_mutex_unlock(philo.l_fork);
-		pthread_mutex_unlock(philo.r_fork);
-		time = get_msec(philo.init);
-		printf("%ld %d is sleeping\n", time, philo.id);
-		usleep(philo.sleep_time);
-		time = get_msec(philo.init);
-		printf("%ld %d is thinking\n", time, philo.id);
+		if (philo->id % 2 == 0)
+			pthread_mutex_lock(philo->l_fork);
+		else
+			pthread_mutex_lock(philo->r_fork);
+		display_info("has taken a fork", philo);
+		if (philo->id % 2 == 0)
+			pthread_mutex_lock(philo->r_fork);
+		else
+			pthread_mutex_lock(philo->l_fork);
+		display_info("is eating", philo);
+		usleep(philo->eat_time * 1000);
+		++philo->meals;
+		philo->last_meal = get_msec(philo->init);
+		pthread_mutex_unlock(philo->l_fork);
+		pthread_mutex_unlock(philo->r_fork);
+		display_info("is sleeping", philo);
+		usleep(philo->sleep_time * 1000);
+		display_info("is thinking", philo);
 	}
 	return (NULL);
 }
@@ -87,8 +88,8 @@ static void	fork_init(t_prog *prog)
 
 static void prog_init(char **av, t_prog *prog)
 {
-	int	i;
-	struct timeval	tv;
+	int		i;
+	ssize_t	time;
 
 	prog->nb_philo = ft_atoi(av[1]);
 	prog->die_time = ft_atoi(av[2]);
@@ -101,9 +102,8 @@ static void prog_init(char **av, t_prog *prog)
 	if (!prog->philos)
 		return (error("philo could not be allocated.", prog));
 	fork_init(prog);
-	if (gettimeofday(&tv, NULL))
-		return (error("gettimeofday error", prog));
-	prog->initial_time = tv.tv_usec / 1000;
+	time = get_msec(0);
+	prog->initial_time = time;
 	philo_init(prog);
 	i = -1;
 	while (++i < prog->nb_philo)
@@ -128,9 +128,9 @@ int	main(int ac, char **av)
 	prog_init(av, &prog);
 	pthread_create(&monitor, NULL, monitor_routine, &prog);
 	i = -1;
-	while (++i < prog.nb_philo)
-		pthread_join(prog.philos->pid, NULL);
 	pthread_join(monitor, NULL);
+	while (++i < prog.nb_philo)
+		pthread_join(prog.philos[i].pid, NULL);
 	i = -1;
 	while (++i < prog.nb_philo)
 		pthread_mutex_destroy(&prog.forks[i]);
