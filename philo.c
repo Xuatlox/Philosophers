@@ -6,20 +6,20 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 13:44:16 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/23 17:33:07 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/24 17:11:06 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void error(const char *message, t_prog *prog)
+int	error(const char *message, t_prog *prog)
 {
 	int	i;
 
 	write(STDERR_FILENO, message, ft_strlen(message));
 	write(STDERR_FILENO, "\n", 1);
 	if (!prog)
-		return ;
+		return (1);
 	i = -1;
 	if (prog->philos)
 	{
@@ -34,6 +34,7 @@ static void error(const char *message, t_prog *prog)
 			pthread_mutex_destroy(&prog->forks[i]);
 		free(prog->forks);
 	}
+	return (1);
 }
 
 void	*philo_routine(void *param)
@@ -48,14 +49,18 @@ void	*philo_routine(void *param)
 		else
 			pthread_mutex_lock(philo->r_fork);
 		display_info("has taken a fork", philo);
+		if (philo->r_fork == philo->l_fork)
+			break ;
 		if (philo->id % 2 == 0)
 			pthread_mutex_lock(philo->r_fork);
 		else
 			pthread_mutex_lock(philo->l_fork);
+		pthread_mutex_lock(&philo->is_eating);
 		display_info("is eating", philo);
 		usleep(philo->eat_time * 1000);
 		++philo->meals;
 		philo->last_meal = get_msec(philo->init);
+		pthread_mutex_unlock(&philo->is_eating);
 		pthread_mutex_unlock(philo->l_fork);
 		pthread_mutex_unlock(philo->r_fork);
 		display_info("is sleeping", philo);
@@ -65,7 +70,7 @@ void	*philo_routine(void *param)
 	return (NULL);
 }
 
-static void	fork_init(t_prog *prog)
+static int	fork_init(t_prog *prog)
 {
 	int	i;
 
@@ -84,9 +89,10 @@ static void	fork_init(t_prog *prog)
 		prog->philos[i].l_fork = &prog->forks[i];
 		++i;
 	}
+	return (0);
 }
 
-static void prog_init(char **av, t_prog *prog)
+static int prog_init(char **av, t_prog *prog)
 {
 	int		i;
 	ssize_t	time;
@@ -104,7 +110,8 @@ static void prog_init(char **av, t_prog *prog)
 	fork_init(prog);
 	time = get_msec(0);
 	prog->initial_time = time;
-	philo_init(prog);
+	if (philo_init(prog))
+		return (error("philos could not be initialized.", prog));
 	i = -1;
 	while (++i < prog->nb_philo)
 		if (pthread_create(&prog->philos[i].pid, NULL, philo_routine, &prog->philos[i]))
@@ -112,6 +119,7 @@ static void prog_init(char **av, t_prog *prog)
 	if (prog->nb_philo <= 0 || prog->die_time <= 0 || prog->eat_time <= 0
 		|| prog->sleep_time <= 0 || prog->turns < -1)
 		return (error("Invalid input", prog));
+	return (0);
 }
 
 int	main(int ac, char **av)
@@ -125,7 +133,8 @@ int	main(int ac, char **av)
 		error("Wrong number of arguments.", NULL);
 		return (0);
 	}
-	prog_init(av, &prog);
+	if (prog_init(av, &prog))
+		return (0);
 	pthread_create(&monitor, NULL, monitor_routine, &prog);
 	i = -1;
 	pthread_join(monitor, NULL);
@@ -133,7 +142,10 @@ int	main(int ac, char **av)
 		pthread_join(prog.philos[i].pid, NULL);
 	i = -1;
 	while (++i < prog.nb_philo)
+	{
 		pthread_mutex_destroy(&prog.forks[i]);
+		pthread_mutex_destroy(&prog.philos[i].is_eating);
+	}
 	free(prog.philos);
 	free(prog.forks);
 	return (0);

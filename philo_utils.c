@@ -6,13 +6,13 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 18:10:03 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/23 15:13:42 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/24 17:05:47 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	philo_init(t_prog *prog)
+int	philo_init(t_prog *prog)
 {
 	int	i;
 
@@ -27,8 +27,14 @@ void	philo_init(t_prog *prog)
 		prog->philos[i].init = prog->initial_time;
 		prog->philos[i].meals = 0;
 		prog->philos[i].last_meal = 0;
+		if (pthread_mutex_init(&prog->philos[i].is_eating, NULL))
+		{
+			error("is eating mutex couldn't be initialised", prog);
+			return (1);
+		}
 		++i;
 	}
+	return (0);
 }
 
 void	*monitor_routine(void *param)
@@ -43,18 +49,20 @@ void	*monitor_routine(void *param)
 	{
 		i = -1;
 		end = 1;
-		while (++i < prog->nb_philo && !prog->death_end)
+		while (++i < prog->nb_philo)
 		{
+			pthread_mutex_lock(&prog->philos[i].is_eating);
 			time = get_msec(prog->initial_time);
 			if (prog->die_time <= time - prog->philos[i].last_meal)
 			{
-				printf("%zd %d died\n", time, i + 1);
+				printf("\033[0;31m%zd %d died\033[0m\n", time, i + 1);
 				prog->death_end = 1;
 			}
+			pthread_mutex_unlock(&prog->philos[i].is_eating);
 			if (prog->philos[i].meals < prog->turns)
 				end = 0;
 		}
-		if (end)
+		if (end && prog->turns != -1)
 			prog->death_end = 1;
 	}
 	return (NULL);
@@ -76,5 +84,5 @@ void	display_info(char *info, t_philo *philo)
 	if (!philo || *philo->dead)
 		return ;
 	time = get_msec(philo->init);
-	printf("%ld %d %s\n", time, philo->id, info);
+	printf("\033[0;32m%ld %d %s\033[0m\n", time, philo->id, info);
 }
