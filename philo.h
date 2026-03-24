@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 13:44:31 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/24 16:57:28 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/24 17:39:11 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,6 @@ void	*monitor_routine(void *param);
 size_t	get_msec(size_t initial_time);
 void	display_info(char *info, t_philo *philo);
 int		error(const char *message, t_prog *prog);
+void	pass_time(size_t ms);
 
 #endif

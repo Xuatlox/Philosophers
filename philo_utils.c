@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 18:10:03 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/24 17:05:47 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/24 17:39:30 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,15 @@ void	display_info(char *info, t_philo *philo)
 		return ;
 	time = get_msec(philo->init);
 	printf("\033[0;32m%ld %d %s\033[0m\n", time, philo->id, info);
+}
+
+void	pass_time(const size_t ms)
+{
+	size_t			start;
+	size_t			actual;
+
+	start = get_msec(0);
+	actual = 0;
+	while (actual < ms)
+		actual = get_msec(start);
 }

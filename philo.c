@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 13:44:16 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/24 17:11:06 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/24 17:39:17 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,14 +57,14 @@ void	*philo_routine(void *param)
 			pthread_mutex_lock(philo->l_fork);
 		pthread_mutex_lock(&philo->is_eating);
 		display_info("is eating", philo);
-		usleep(philo->eat_time * 1000);
+		pass_time(philo->eat_time);
 		++philo->meals;
 		philo->last_meal = get_msec(philo->init);
 		pthread_mutex_unlock(&philo->is_eating);
 		pthread_mutex_unlock(philo->l_fork);
 		pthread_mutex_unlock(philo->r_fork);
 		display_info("is sleeping", philo);
-		usleep(philo->sleep_time * 1000);
+		pass_time(philo->sleep_time);
 		display_info("is thinking", philo);
 	}
 	return (NULL);
