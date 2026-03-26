@@ -1,32 +1,48 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   ft_atoi.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/24 10:43:59 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/12 15:47:23 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/26 13:08:48 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdlib.h"
-
-void	*ft_calloc(size_t nmemb, size_t size)
+static void	add_digits(const char *digits, int *res)
 {
-	void	*res;
-	size_t	i;
+	int		i;
 
-	if (size != 0 && nmemb * size / size != nmemb)
-		return (NULL);
-	res = malloc(nmemb * size);
-	if (!res)
-		return (NULL);
 	i = 0;
-	while (i < nmemb * size)
+	while (digits[i] >= '0' && digits[i] <= '9')
 	{
-		((char *)res)[i] = 0;
-		++i;
+		*res = *res * 10 + digits[i] - '0';
+		i++;
 	}
-	return (res);
+}
+
+int	ft_atoi(const char *nptr)
+{
+	int		sign;
+	int		res;
+
+	sign = 1;
+	res = 0;
+	while ((*nptr >= 9 && *nptr <= 13) || *nptr == 32)
+		nptr++;
+	if (*nptr == '-')
+		sign = -1;
+	if (*nptr == '+' || *nptr == '-')
+		nptr++;
+	while (*nptr == '0')
+		nptr++;
+	if (*nptr >= '0' && *nptr <= '9')
+	{
+		add_digits(nptr, &res);
+		return (sign * res);
+	}
+	if (*nptr)
+		return (-2);
+	return (0);
 }

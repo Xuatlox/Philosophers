@@ -1,14 +1,18 @@
-.PHONY : all clean fclean re
 NAME = philo
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
-SRC = philo.c \
+SRC_DIR = src/
+FILES = main.c \
+		init.c \
+		end_prog.c \
 		ft_strlen.c \
 		ft_atoi.c \
-		ft_calloc.c \
-		philo_utils.c
+		philo_utils.c \
+		philo_routine.c \
+		monitor_routine.c
+SRC = $(addprefix $(SRC_DIR), $(FILES))
 OBJ_DIR = obj/
-OBJ = $(addprefix $(OBJ_DIR), $(SRC:.c=.o))
+OBJ = $(addprefix $(OBJ_DIR), $(FILES:.c=.o))
 
 all : $(NAME)
 
@@ -28,3 +32,5 @@ fclean : clean
 	rm -rf $(NAME)
 
 re : fclean $(NAME)
+
+.PHONY : all clean fclean re
