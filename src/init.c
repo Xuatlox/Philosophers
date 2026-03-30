@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/26 15:38:44 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/26 16:23:16 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/30 15:12:57 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static int	philos_init(t_prog *prog)
 		prog->philos[i].write = &prog->write;
 		prog->philos[i].death = &prog->death;
 		if (pthread_mutex_init(&prog->philos[i].is_eating, NULL))
-			return (end_prog("is_eating mutex init error\n", prog, 5, i));
+			return (end_prog("check mutex init error\n", prog, 5, i));
 		++i;
 	}
 	return (0);
@@ -45,6 +45,10 @@ static int	forks_init(t_prog *prog)
 	int	i;
 
 	i = 0;
+	if (pthread_mutex_init(&prog->write, NULL))
+		return (end_prog("write mutex init error\n", prog, 1, 0));
+	if (pthread_mutex_init(&prog->death, NULL))
+		return (end_prog("death mutex init error\n", prog, 2, 0));
 	prog->forks = malloc((prog->nb_philo + 1) * sizeof(pthread_mutex_t));
 	if (!prog->forks)
 		return (end_prog("forks malloc() error\n", prog, 3, 0));
@@ -73,13 +77,12 @@ int	prog_init(char **av, t_prog *prog)
 	prog->turns = -1;
 	if (av[5])
 		prog->turns = ft_atoi(av[5]);
+	if (prog->nb_philo < 1 || prog->die_time < 1 || prog->sleep_time < 1
+		|| prog->eat_time < 1 || prog->turns < -1)
+		return (end_prog("invalid argument\n", prog, 0, 0));
 	prog->philos = malloc((prog->nb_philo + 1) * sizeof(t_philo));
 	if (!prog->philos)
 		return (end_prog("philo malloc error\n", prog, 0, 0));
-	if (pthread_mutex_init(&prog->write, NULL))
-		return (end_prog("write mutex init error\n", prog, 1, 0));
-	if (pthread_mutex_init(&prog->death, NULL))
-		return (end_prog("death mutex init error\n", prog, 2, 0));
 	if (forks_init(prog))
 		return (1);
 	if (philos_init(prog))

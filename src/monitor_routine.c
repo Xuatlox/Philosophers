@@ -6,43 +6,45 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/26 15:44:22 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/26 17:06:40 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/30 16:10:48 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	proc_death(t_prog *prog, const int philo, const size_t time)
+static void	proc_death(t_prog *prog, const int philo)
 {
-	pthread_mutex_unlock(prog->philos[philo].death);
-	pthread_mutex_lock(prog->philos[philo].write);
-	printf("\033[0;31m%zd | %d died\033[0m\n", time, philo + 1);
-	pthread_mutex_unlock(prog->philos[philo].write);
-	pthread_mutex_lock(prog->philos[philo].death);
 	prog->death_end = 1;
 	pthread_mutex_unlock(prog->philos[philo].death);
+	pthread_mutex_lock(prog->philos[philo].write);
+	printf("\033[0;31m%zd %d died\033[0m\n", get_msec(prog->initial_time), philo + 1);
+	pthread_mutex_unlock(prog->philos[philo].write);
 }
 
 static int check_end(t_prog *prog)
 {
 	size_t	time;
 	int		i;
+	int		end;
 
-	i = -1;
-	while (++i < prog->nb_philo)
+	i = 0;
+	end = 1;
+	while (i < prog->nb_philo)
 	{
 		pthread_mutex_lock(&prog->philos[i].is_eating);
 		pthread_mutex_lock(prog->philos[i].death);
 		time = get_msec(prog->initial_time);
-		if (prog->die_time <= time - prog->philos[i].last_meal && !prog->death_end)
-			proc_death(prog, i, time);
+		if ((size_t)prog->die_time <= time - prog->philos[i].last_meal
+			&& !prog->death_end)
+			proc_death(prog, i);
 		else
 			pthread_mutex_unlock(prog->philos[i].death);
 		pthread_mutex_unlock(&prog->philos[i].is_eating);
 		if (prog->philos[i].meals < prog->turns)
-			return (0);
+			end = 0;
+		++i;
 	}
-	return (1);
+	return (end);
 }
 
 void	*monitor_routine(void *param)
@@ -51,14 +53,18 @@ void	*monitor_routine(void *param)
 	int		end;
 
 	prog = (t_prog *)param;
-	pthread_mutex_lock(&prog->death);
 	usleep(250);
+	pthread_mutex_lock(&prog->death);
 	while (!prog->death_end)
 	{
 		pthread_mutex_unlock(&prog->death);
 		end = check_end(prog);
 		if (end && prog->turns != -1)
+		{
+			pthread_mutex_lock(&prog->death);
 			prog->death_end = 1;
+			pthread_mutex_unlock(&prog->death);
+		}
 		pthread_mutex_lock(&prog->death);
 	}
 	pthread_mutex_unlock(&prog->death);

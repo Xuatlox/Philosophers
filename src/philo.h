@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 13:44:31 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/26 16:19:16 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/30 16:09:34 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ typedef struct s_philo
 typedef struct	s_prog
 {
 	int				nb_philo;
-	size_t			die_time;
+	int				die_time;
 	int				eat_time;
 	int				sleep_time;
 	int				turns;

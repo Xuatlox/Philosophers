@@ -1,6 +1,6 @@
 NAME = philo
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g
+CFLAGS = -Wall -Wextra -Werror -g -pthread
 SRC_DIR = src/
 FILES = main.c \
 		init.c \
@@ -19,7 +19,7 @@ all : $(NAME)
 $(NAME) : $(OBJ)
 	$(CC) $(CFLAGS) -o $(NAME) $(OBJ)
 
-$(OBJ) : $(OBJ_DIR) $(SRC)
+$(OBJ) : $(SRC) | $(OBJ_DIR)
 	cd $(OBJ_DIR) && $(CC) $(CFLAGS) -c $(addprefix ../, $(SRC))
 
 $(OBJ_DIR) :

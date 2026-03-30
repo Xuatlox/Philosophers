@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 18:10:03 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/26 17:02:21 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/30 10:27:16 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ size_t	get_msec(const size_t initial_time)
 	struct timeval	tv;
 
 	if (gettimeofday(&tv, NULL) != 0)
-		write(STDERR_FILENO, "gettimeofday() error\n", 22);
+		write(STDERR_FILENO, "gettimeofday() error\n", 21);
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000 - initial_time);
 }
 
@@ -29,7 +29,7 @@ void	display_info(char *info, t_philo *philo)
 		return ;
 	pthread_mutex_lock(philo->write);
 	time = get_msec(philo->init);
-	printf("\033[0;32m%ld | %d %s\033[0m\n", time, philo->id, info);
+	printf("\033[0;32m%ld %d %s\033[0m\n", time, philo->id, info);
 	pthread_mutex_unlock(philo->write);
 }
 
