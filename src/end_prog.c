@@ -6,13 +6,13 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/26 15:41:43 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/26 15:42:07 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/31 16:15:41 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	end_prog(const char *message, t_prog *prog, int free_code, int last_el)
+void	end_prog(const char *message, t_prog *prog, int free_code, int last_el)
 {
 	if (message)
 		write(STDERR_FILENO, message, ft_strlen(message));
@@ -37,5 +37,4 @@ int	end_prog(const char *message, t_prog *prog, int free_code, int last_el)
 		pthread_mutex_destroy(&prog->write);
 	if (free_code > 0)
 		free(prog->philos);
-	return (1);
 }

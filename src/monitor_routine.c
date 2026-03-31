@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/26 15:44:22 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/30 16:10:48 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/31 16:40:42 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,12 @@ static void	proc_death(t_prog *prog, const int philo)
 	prog->death_end = 1;
 	pthread_mutex_unlock(prog->philos[philo].death);
 	pthread_mutex_lock(prog->philos[philo].write);
-	printf("\033[0;31m%zd %d died\033[0m\n", get_msec(prog->initial_time), philo + 1);
+	printf("\033[0;31m%zd %d died\033[0m\n",
+		get_msec(prog->initial_time), philo + 1);
 	pthread_mutex_unlock(prog->philos[philo].write);
 }
 
-static int check_end(t_prog *prog)
+static int	check_end(t_prog *prog)
 {
 	size_t	time;
 	int		i;
@@ -53,7 +54,6 @@ void	*monitor_routine(void *param)
 	int		end;
 
 	prog = (t_prog *)param;
-	usleep(250);
 	pthread_mutex_lock(&prog->death);
 	while (!prog->death_end)
 	{

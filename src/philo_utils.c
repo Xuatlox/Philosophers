@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/12 18:10:03 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/30 10:27:16 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/31 17:11:48 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ void	pass_time(const size_t ms, t_philo *philo)
 	{
 		pthread_mutex_unlock(philo->death);
 		actual = get_msec(start);
+		usleep(100);
 		pthread_mutex_lock(philo->death);
 	}
 	pthread_mutex_unlock(philo->death);

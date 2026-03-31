@@ -6,11 +6,19 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/25 13:47:37 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/30 17:04:19 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/31 16:43:13 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static void	one_philo(t_philo *philo)
+{
+	pthread_mutex_lock(philo->death);
+	if (!*philo->dead)
+		display_info("has taken a fork", philo);
+	pthread_mutex_unlock(philo->death);
+}
 
 static void	philo_eat(t_philo *philo)
 {
@@ -22,7 +30,10 @@ static void	philo_eat(t_philo *philo)
 	pthread_mutex_lock(philo->l_fork);
 	pthread_mutex_lock(philo->death);
 	if (!*philo->dead)
+	{
+		display_info("has taken a fork", philo);
 		display_info("is eating", philo);
+	}
 	pthread_mutex_unlock(philo->death);
 	pthread_mutex_lock(&philo->is_eating);
 	++philo->meals;
@@ -42,7 +53,7 @@ static void	philo_sleep(t_philo *philo)
 	pass_time(philo->sleep_time, philo);
 }
 
-static void philo_think(t_philo *philo)
+static void	philo_think(t_philo *philo)
 {
 	pthread_mutex_lock(philo->death);
 	if (!*philo->dead)
@@ -56,9 +67,9 @@ void	*philo_routine(void *param)
 
 	philo = (t_philo *)param;
 	if (philo->id % 2 == 1)
-		usleep(1);
+		pass_time(philo->eat_time / 2, philo);
 	if (philo->r_fork == philo->l_fork)
-		display_info("has taken a fork", philo);
+		one_philo(philo);
 	else
 	{
 		pthread_mutex_lock(philo->death);

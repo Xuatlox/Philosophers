@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 13:44:31 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/30 16:09:34 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/31 16:45:16 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ typedef struct s_philo
 	int				meals;
 	size_t			last_meal;
 	size_t			init;
-} t_philo;
+}	t_philo;
 
-typedef struct	s_prog
+typedef struct s_prog
 {
 	int				nb_philo;
 	int				die_time;
@@ -50,7 +50,7 @@ typedef struct	s_prog
 	pthread_mutex_t	write;
 	pthread_mutex_t	death;
 	t_philo			*philos;
-} t_prog;
+}	t_prog;
 
 int		ft_atoi(const char *nptr);
 int		prog_init(char **av, t_prog *prog);
@@ -58,7 +58,7 @@ size_t	ft_strlen(const char *s);
 void	*monitor_routine(void *param);
 size_t	get_msec(size_t initial_time);
 void	display_info(char *info, t_philo *philo);
-int		end_prog(const char *message, t_prog *prog, int free_code, int last_el);
+void	end_prog(const char *message, t_prog *prog, int free_code, int last_el);
 void	pass_time(size_t ms, t_philo *philo);
 void	*philo_routine(void *param);
 

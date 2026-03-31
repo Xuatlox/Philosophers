@@ -6,7 +6,7 @@
 /*   By: ansimonn <ansimonn@student.42angouleme.f>  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 13:44:16 by ansimonn          #+#    #+#             */
-/*   Updated: 2026/03/26 15:42:32 by ansimonn         ###   ########.fr       */
+/*   Updated: 2026/03/31 16:48:09 by ansimonn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,21 @@ int	main(int ac, char **av)
 	pthread_t		monitor;
 
 	if (ac != 5 && ac != 6)
-		return (end_prog("only 4-5 arguments allowed\n", NULL, 0, 0));
+	{
+		end_prog("only 4-5 arguments allowed\n", NULL, 0, 0);
+		return (0);
+	}
 	if (prog_init(av, &prog))
 		return (1);
 	if (pthread_create(&monitor, NULL, monitor_routine, &prog))
-		return (end_prog("monitor thread init error\n", &prog, 6, prog.nb_philo));
+	{
+		end_prog("monitor thread init error\n", &prog, 6, prog.nb_philo);
+		return (0);
+	}
 	i = -1;
 	pthread_join(monitor, NULL);
 	while (++i < prog.nb_philo)
 		pthread_join(prog.philos[i].pid, NULL);
-	return (end_prog(NULL, &prog, 5, prog.nb_philo));
+	end_prog(NULL, &prog, 5, prog.nb_philo);
+	return (0);
 }
